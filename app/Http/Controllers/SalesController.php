@@ -83,10 +83,9 @@ class SalesController extends Controller
      * @param \App\Models\SaleModel $saleModel
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
-    public function update(Request $request, SaleModel $saleModel)
+    public function update(Request $request, SaleModel $saleModel, $sale)
     {
         $request->validate([
-            'id' => 'required|integer',
             'product_id' => 'required|integer',
             'price' => 'required|integer',
             'count' => 'required|integer',
@@ -94,7 +93,7 @@ class SalesController extends Controller
             'year' => 'required|integer',
         ]);
 
-        $sale = SaleModel::query()->find($request->id);
+        $sale = SaleModel::query()->find($sale);
 
         if ($sale !== null) {
             $sale->product_id = $request->product_id;
@@ -120,7 +119,9 @@ class SalesController extends Controller
      */
     public function destroy(SaleModel $saleModel, $sale)
     {
-        return SaleModel::query()->where('id', '=', $sale)->delete();
+        return SaleModel::query()->where('id', '=', $sale)->delete() == 1?
+            response()->json(['message' => 'deleted']) :
+            response()->json(['message' => 'not deleted']);
     }
 
     public function saleStatistics()

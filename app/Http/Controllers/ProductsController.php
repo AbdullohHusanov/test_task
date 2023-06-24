@@ -38,7 +38,7 @@ class ProductsController extends Controller
         $request->validate([
             'name' => 'required|string|unique:products,name',
             'brand' => 'required|string',
-            'price' => 'required|float',
+            'price' => 'required|integer',
             'status' => 'required|boolean',
         ]);
 
@@ -81,17 +81,16 @@ class ProductsController extends Controller
      * @param  \App\Models\ProductModel  $productModel
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
-    public function update(Request $request, ProductModel $productModel)
+    public function update(Request $request, ProductModel $productModel, $product)
     {
         $request->validate([
-            'id' => 'required|integer',
-            'name' => 'required|string|unique:products,name',
+            'name' => 'required|string',
             'brand' => 'required|string',
-            'price' => 'required|float',
+            'price' => 'required|integer',
             'status' => 'required|boolean'
         ]);
 
-        $prod = ProductModel::query()->find($request->id);
+        $prod = ProductModel::query()->find($product);
         if ($prod !== null) {
             $prod->name = $request->name;
             $prod->brand = $request->brand;
@@ -113,6 +112,8 @@ class ProductsController extends Controller
      */
     public function destroy(ProductModel $productModel, $product)
     {
-        return ProductModel::query()->where('id','=', value: $product)->delete();
+        return ProductModel::query()->where('id','=', value: $product)->delete() == 1?
+            response()->json(['message' => 'deleted']) :
+            response()->json(['message' => 'not deleted']);
     }
 }
