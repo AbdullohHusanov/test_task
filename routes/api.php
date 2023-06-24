@@ -20,6 +20,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::resource('/product', \App\Http\Controllers\ProductsController::class);
 Route::resource('/sale', \App\Http\Controllers\SalesController::class);
-
+Route::get('statistics', [\App\Http\Controllers\SalesController::class, 'saleStatistics']);
 //8600 3304 3303 9201
 //90 052 42 82

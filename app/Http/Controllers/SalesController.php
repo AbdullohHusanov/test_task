@@ -125,6 +125,58 @@ class SalesController extends Controller
 
     public function saleStatistics()
     {
+        $result = [];
 
+        $monthStatistics = [
+                '1' => 0,
+                '2' => 0,
+                '3' => 0,
+                '4' => 0,
+                '5' => 0,
+                '6' => 0,
+                '7' => 0,
+                '8' => 0,
+                '9' => 0,
+                '10' => 0,
+                '11' => 0,
+                '12' => 0,
+                'year' => 0
+        ];
+        $monthStatistics2 = [
+                '1' => 0,
+                '2' => 0,
+                '3' => 0,
+                '4' => 0,
+                '5' => 0,
+                '6' => 0,
+                '7' => 0,
+                '8' => 0,
+                '9' => 0,
+                '10' => 0,
+                '11' => 0,
+                '12' => 0,
+                'year' => 0
+        ];
+
+        $sales = SaleModel::query()->orderBy('year', 'ASC')->get();
+
+        foreach ($sales as $sale) {
+            if ($sale['year'] === $monthStatistics['year']){
+                $monthStatistics[$sale['month']] += $sale['count'] * $sale['price'];
+            }
+            if ($sale['year'] !== $monthStatistics['year'] && $monthStatistics['year'] === 0){
+                $monthStatistics['year'] = $sale['year'];
+                $monthStatistics[$sale['month']] += $sale['count'] * $sale['price'];
+            }
+            if ($sale['year'] !== $monthStatistics['year'] && $monthStatistics['year'] !== 0){
+                $result[] = $monthStatistics;
+                $monthStatistics = $monthStatistics2;
+                $monthStatistics['year'] = $sale['year'];
+                $monthStatistics[$sale['month']] += $sale['count'] * $sale['price'];
+            }
+        }
+        $result[] = $monthStatistics;
+        return $result;
     }
 }
+
